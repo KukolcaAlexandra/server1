@@ -10,29 +10,21 @@ router.use(readDataFromFile);
 
 router.get('/:id', function(req, res) {
   let newsFound;
-  try {
-    data.forEach((item) => {
-      if(item['id'] === req.params.id){
-        newsFound = item;
-      }
-    });
-  
-    if (newsFound) {
-      res.send(newsFound);
-    } else {
-      res.send('No news found with the id');
+  data.forEach((item) => {
+    if(item['id'] === req.params.id) {
+      newsFound = item;
     }
-  } catch (err) {
-    console.error(err);
+  });
+  
+  if (newsFound) {
+    res.send(newsFound);
+  } else {
+    res.send('No news found with the id');
   }
 });
 
 router.get('/', function(req, res) {
-  try {
-    res.send(data);
-  } catch (err) {
-    console.error(err);
-  }
+  res.send(data);
 });
 
 router.post('/', function(req, res) {
@@ -74,8 +66,12 @@ async function readDataFromFile(req, res, next) {
   const file = './source.json';
  
   if (!data) {
-    const source = await  readFileAsync(file, 'utf-8');
-    data = JSON.parse(source);
+    try {
+      const source = await readFileAsync(file, 'utf-8');
+      data = JSON.parse(source);
+    } catch (err) {
+      console.log(err);
+    }
   }
   next();
 }
